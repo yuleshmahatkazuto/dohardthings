@@ -11,8 +11,13 @@ const App = () => {
   };
   const [workout, setWorkout] = useState<Workout>({ title: "", content: "" });
 
+  const fetchWorkout = async () => {
+    const res = await axios.get("/api/generate");
+    setWorkout(res.data.result);
+  };
+
   useEffect(() => {
-    axios.post("/api/generate").then((res) => setWorkout(res.data.result));
+    fetchWorkout();
   }, []);
 
   return (
@@ -38,7 +43,7 @@ const App = () => {
       </Typography>
       <Typography sx={{ width: "fit-content" }}>{workout.title}</Typography>
       <Typography sx={{ width: "fit-content" }}>{workout.content}</Typography>
-      <Button variant="contained" color="secondary">
+      <Button variant="contained" color="secondary" onClick={fetchWorkout}>
         Another Challenge
       </Button>
     </Container>

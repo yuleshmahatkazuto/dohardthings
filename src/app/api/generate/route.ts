@@ -1,17 +1,24 @@
 import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from "next/server";
+import pool from "@/lib/supabase";
+
+const exerciseDone: string[] = [];
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
-const prompt = `Give me an easy 1-2 min bodyweight workout that I can do anywhere without any equipments.
-  The response should only have total of 2 sentences.
-  The first sentence should be a title. The second sentence should be the exercise information.
-  Do not put asterisk before or after the title.
-  The workout should assume the person can do medium to hard challenges and easier variations should not be there in the response.
-  The workout should not be combination of different exercise but a same exercise.
-  `;
-export async function POST() {
-  const exerciseDone: string[] = [];
-  console.log("Triggered the post request to ai api");
+const prompt = `Give me an advanced 1–2 minute bodyweight workout that I can do anywhere without any equipment.
+
+Do NOT suggest any of the following exercises: ${exerciseDone.join(",")}.
+
+Respond with exactly two sentences:
+- The first sentence must only be the exercise title (e.g. "Squats.")
+- The second sentence must be a short, specific instruction for the workout (e.g. "Perform 100 squats with minimum rest in between.")
+
+Do not use asterisks, emojis, bullet points, or any other formatting.
+
+The workout must be one single type of exercise, no combinations or variations. It should assume the person can handle medium to hard challenges and does not need beginner modifications.`;
+
+export async function GET() {
+  console.log("Triggered the get request");
   try {
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
@@ -24,15 +31,25 @@ export async function POST() {
     if (response.text) {
       console.log(response.text);
       const splitArray = response.text.split("\n");
-      splitArray.filter((item) => {
-        if (item) return item;
-      });
-      console.log(splitArray);
-      workout.title = splitArray[0];
-      workout.content = splitArray[1];
-      exerciseDone.push(workout.title);
+      const filteredArray = splitArray.filter((item) => item.trim() != "");
+      workout.title = filteredArray[0];
+      workout.content = filteredArray[1];
+      console.log(workout);
+      try {
+        await pool.query("INSERT INTO exercises (name) values ($1)", [
+          workout.title,
+        ]);
+
+        const result = await pool.query("select name from exercises");
+        result.rows.forEach((row) => exerciseDone.push(row.name));
+      } catch (error) {
+        console.log(error);
+        return NextResponse.json(
+          { error: "Internal server error" },
+          { status: 500 }
+        );
+      }
     }
-    console.log(workout);
     return NextResponse.json({ result: workout });
   } catch (error) {
     console.log(error);
