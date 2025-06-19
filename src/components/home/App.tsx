@@ -1,6 +1,20 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { Button, Container, Typography } from "@mui/material";
+import axios from "axios";
+
 const App = () => {
+  type Workout = {
+    title: string;
+    content: string;
+  };
+  const [workout, setWorkout] = useState<Workout>({ title: "", content: "" });
+
+  useEffect(() => {
+    axios.post("/api/generate").then((res) => setWorkout(res.data.result));
+  }, []);
+
   return (
     <Container
       sx={{
@@ -22,9 +36,8 @@ const App = () => {
       >
         Your Daily Challenge
       </Typography>
-      <Typography sx={{ width: "fit-content" }}>
-        <p>20 pushpups</p>
-      </Typography>
+      <Typography sx={{ width: "fit-content" }}>{workout.title}</Typography>
+      <Typography sx={{ width: "fit-content" }}>{workout.content}</Typography>
       <Button variant="contained" color="secondary">
         Another Challenge
       </Button>
