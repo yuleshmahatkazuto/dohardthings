@@ -1,10 +1,8 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { Button, Container, Typography } from "@mui/material";
 import axios from "axios";
 
-const App = () => {
+const home = () => {
   type Workout = {
     title: string;
     content: string;
@@ -50,4 +48,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default home;
