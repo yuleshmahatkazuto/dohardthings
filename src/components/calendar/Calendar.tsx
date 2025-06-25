@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Reactcalendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import "./Calendar.css";
 
 type ValuePiece = Date | null;
 

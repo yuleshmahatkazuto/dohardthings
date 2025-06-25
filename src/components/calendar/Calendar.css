@@ -1,0 +1,11 @@
+.react-calendar__tile--active {
+  background: #9c27b0 !important; /* Your primary color */
+  color: white !important;
+  border-radius: 3px;
+}
+
+.react-calendar__tile--now {
+  background: #bd512f !important; /* your preferred color */
+  color: white !important;
+  border-radius: 3px; /* Optional: make it circular */
+}

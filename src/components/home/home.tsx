@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Container, Typography } from "@mui/material";
+import { Button, Container, Typography, Box } from "@mui/material";
 import axios from "axios";
 
 const home = () => {
@@ -8,10 +8,18 @@ const home = () => {
     content: string;
   };
   const [workout, setWorkout] = useState<Workout>({ title: "", content: "" });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchWorkout = async () => {
-    const res = await axios.get("/api/generate");
-    setWorkout(res.data.result);
+    setLoading(true);
+    try {
+      const res = await axios.get("/api/generate");
+      setWorkout(res.data.result);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -25,25 +33,34 @@ const home = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
         gap: "20px",
       }}
     >
       <Typography
-        variant="h2"
-        component="h1"
         sx={{
-          color: "#2979ff",
-          fontFamily: "Edu NSW ACT Cursive, Cursive",
+          width: "fit-content",
+          fontSize: "2.5rem",
+          color: "#bd512f",
+          alignSelf: "flex-start",
         }}
       >
-        Your Daily Challenge
+        {workout.title}
       </Typography>
-      <Typography sx={{ width: "fit-content" }}>{workout.title}</Typography>
       <Typography sx={{ width: "fit-content" }}>{workout.content}</Typography>
-      <Button variant="contained" color="secondary" onClick={fetchWorkout}>
-        Another Challenge
-      </Button>
+
+      <Box sx={{ display: "flex", gap: "15px" }}>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={fetchWorkout}
+          loading={loading}
+        >
+          Another Challenge
+        </Button>
+        <Button variant="contained" sx={{ backgroundColor: "#bd512f" }}>
+          Mark Complete
+        </Button>
+      </Box>
     </Container>
   );
 };
