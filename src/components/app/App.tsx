@@ -2,8 +2,13 @@
 import Home from "../home/home";
 import { Box, Typography } from "@mui/material";
 import Calendar from "../calendar/Calendar";
+import react, { useState } from "react";
+
+type ValuePiece = Date | null;
+type Value = ValuePiece | [ValuePiece, ValuePiece];
 
 const App = () => {
+  const [selectedDate, setSelectedDate] = useState<Value>(new Date());
   return (
     <Box
       sx={{
@@ -35,8 +40,8 @@ const App = () => {
           height: "100%",
         }}
       >
-        <Calendar />
-        <Home />
+        <Calendar date={selectedDate} setDate={setSelectedDate} />
+        <Home date={selectedDate} />
       </Box>
     </Box>
   );

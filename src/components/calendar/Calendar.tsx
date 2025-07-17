@@ -9,12 +9,31 @@ type ValuePiece = Date | null;
 
 type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const Calendar = () => {
-  const [date, setDate] = useState<Value>(new Date());
+type Props = {
+  date: Value;
+  setDate: React.Dispatch<React.SetStateAction<Value>>;
+};
+
+const Calendar = ({ date, setDate }: Props) => {
+  const [workoutDates, setWorkoutDates] = useState<Date[]>([]);
   return (
     <Box>
       <Typography>Workout Calendar</Typography>
-      <Reactcalendar onChange={setDate} value={date} />
+      <Reactcalendar
+        onChange={setDate}
+        value={date}
+        tileClassName={({ date, view }) => {
+          if (view === "month") {
+            const matched = workoutDates.find(
+              (d) =>
+                d.getFullYear() === date.getFullYear() &&
+                d.getMonth() === date.getMonth() &&
+                d.getDate() === date.getDate()
+            );
+            return matched ? "workout-day" : null;
+          }
+        }}
+      />
       <Typography>
         Selected Date:{" "}
         {Array.isArray(date)

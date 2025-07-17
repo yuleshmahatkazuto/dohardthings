@@ -9,3 +9,9 @@
   color: white !important;
   border-radius: 3px; /* Optional: make it circular */
 }
+
+.workout-day {
+  background-color: #4caf50 !important;
+  color: white !important;
+  border-radius: 3px;
+}

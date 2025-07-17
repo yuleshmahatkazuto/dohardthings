@@ -57,7 +57,6 @@ export async function GET() {
         contents: prompt + `The Workout cannot be ${exerciseDone}`,
       });
       if (response.text) {
-        console.log(response.text);
         const splitArray = response.text.split("\n");
         const filteredArray = splitArray.filter((item) => item.trim() != "");
         workout.title = filteredArray[0];
@@ -73,14 +72,12 @@ export async function GET() {
         );
       }
       const entry = await pool.query(
-        "INSERT INTO exercises (name) values ($1) returning (id, name, complete)",
+        "INSERT INTO exercises (name) values ($1) returning id, name, complete",
         [workout.title]
       );
-      console.log(entry.rows[0]);
       exerciseDone.push(entry.rows[0].name);
       workout.id = entry.rows[0].id;
       workout.completed = entry.rows[0].complete;
-      console.log(workout);
     } catch (error) {
       console.log(error);
       return NextResponse.json(
